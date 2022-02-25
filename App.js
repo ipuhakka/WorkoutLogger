@@ -7,7 +7,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TextInput, Button } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
@@ -51,28 +52,33 @@ export default function App() {
   return (
     <View style={styles.container}>
       <TextInput
+        mode='outlined'
+        label="Tallenna jotain Asyncstorageen"
+        value={text}
         onChangeText={(newValue) =>
         {
           setText(newValue);
         }}
-        style={styles.input}
         value={text}></TextInput>
-      <Button 
-        title='Tallenna'
+      <Button
+        // raised={true}
+        mode='outlined'
+        color='blue'
+        // dark={true}
         onPress={() => 
         {
           storeData(text);
-        }} />
+        }} >Tallenna</Button>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // flex: 1,
+    // backgroundColor: '#fff',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   input: {
     height: 40,
