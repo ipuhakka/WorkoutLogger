@@ -1,75 +1,51 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import FaIcon from 'react-native-vector-icons/FontAwesome';
 
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+const Tab = createBottomTabNavigator();
 
-export default function App() {
+const PlaceHolder = () =>
+{
+  return (<Text>{'Placeholder'}</Text>);
+}
 
-  const storeData = async (newValue) =>
-  {
-    console.log('store', newValue);
-    try 
-    {
-      await AsyncStorage.setItem(
-        '@text',
-        newValue
-      );
-    } catch (error) 
-    {
-      // Error saving data
-      console.log('error occured', error);
-    }
-  };
-
-  const [text, setText] = useState('initial');
-
-  useEffect(() => {
-    async function fetch()
-    {
-      try 
-      {
-        const res = await AsyncStorage.getItem('@text');
-        console.log('got value', res);
-        setText(res);
-      } catch (error) 
-      {
-        // Error saving data
-        console.log('error occured', error);
-      }
-    }
-
-    fetch().catch(err => console.log('caught err'));
-  }, []);
-
+export default function App()
+{
   return (
-    <View style={styles.container}>
-      <TextInput
-        mode='outlined'
-        label="Tallenna jotain Asyncstorageen"
-        value={text}
-        onChangeText={(newValue) =>
-        {
-          setText(newValue);
-        }}
-        value={text}></TextInput>
-      <Button
-        // raised={true}
-        mode='outlined'
-        color='blue'
-        // dark={true}
-        onPress={() => 
-        {
-          storeData(text);
-        }} >Tallenna</Button>
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator >
+        <Tab.Screen 
+            name="NewWorkout"
+            component={PlaceHolder}
+            options={{
+              title: 'Uusi treeni',
+              tabBarIcon: ({ color }) =>
+              {
+                  return <FaIcon name='plus' color={color} size={20} />;
+              } }} />
+        <Tab.Screen 
+          name='History'
+          component={PlaceHolder}
+          options={{
+            title: 'Historia',
+            tabBarIcon: ({ color }) =>
+            {
+                return <FaIcon name='history' color={color} size={20} />;
+            }
+          }} />
+        <Tab.Screen 
+          name="Statistics"
+          component={PlaceHolder}
+          options={{ 
+            title: 'Tilastot',
+            tabBarIcon: ({ color }) =>
+            {
+                return <FaIcon name='bar-chart' color={color} size={20} />;
+            }}} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
