@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Modal } from 'react-native';
 import { Title, Button, TextInput } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { Dropdown } from 'react-native-element-dropdown';
 import PropTypes from 'prop-types';
 
