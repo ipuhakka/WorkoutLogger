@@ -14,8 +14,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 0.5,
     borderRadius: 8,
-    paddingHorizontal: 8,
-    margin: 2
+    paddingHorizontal: 8
   },
   modalButtonContainer: {
     flexDirection: 'row',
@@ -23,15 +22,15 @@ const styles = StyleSheet.create({
   }
 });
 
-const DropdownWrapper = ({ title, options, allowAddNew, onAddNew }) => 
+/** Controlled dropdown component */
+const DropdownWrapper = ({ title, options, allowAddNew, onAddNew, onChange, value, style }) => 
 {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [value, setValue] = useState(null);
   const [newItem, setNewItem] = useState(null);
 
   return (
-    <View>
+    <View style={style}>
       <Modal
         visible={modalVisible}>
           <TextInput label='Uusi' onChangeText={(newText) => setNewItem(newText)} value={newItem}/>
@@ -58,8 +57,7 @@ const DropdownWrapper = ({ title, options, allowAddNew, onAddNew }) =>
         value={value}
         onChange={item => 
         {
-          setValue(item.key);
-          console.log('change', item);
+          onChange(item.key);
         }} />
       {allowAddNew && <Button
         color='blue'

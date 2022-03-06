@@ -1,17 +1,26 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {View, StyleSheet} from 'react-native';
 import { TextInput, Title } from 'react-native-paper';
 import {Slider} from '@miblanchard/react-native-slider';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange}) =>
+const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange, style}) =>
 {
-    return <View>
+    const [textState, setTextState] = useState((value || sliderMinValue).toString());
+
+    useEffect(() =>
+    {
+        setTextState(value);
+    }, [value]);
+
+    return <View style={style}>
         <Title>{title}</Title>
         <TextInput
             onChangeText={(newValue) => 
             {
+                setTextState(newValue);
+
                 const asInt = parseInt(newValue);
 
                 if (asInt)
@@ -19,12 +28,13 @@ const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange}) =
                     onChange(asInt);
                 }
             }}
-            value={value.toString()}
+            value={(textState).toString()}
             style={{ margin: 10, width: '25%', height: 50}} />
         <Slider
             value={value}
             onSlidingComplete={newValue => 
             {
+                setTextState(newValue[0]);
                 onChange(newValue[0]);
             }}
             minimumValue={sliderMinValue} 
@@ -42,7 +52,9 @@ SliderInput.propTypes = {
 
     value: PropTypes.number.isRequired,
 
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+
+    style: PropTypes.object
 }
 
 export default SliderInput;
