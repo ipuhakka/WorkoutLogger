@@ -50,7 +50,7 @@ const Field = ({field, value, onChange, style}) =>
     }
 }
 
-const Exercise = ({fields}) =>
+const Exercise = ({fields, onChange}) =>
 {
     const [exerciseState, setExerciseState] = useState({});
 
@@ -66,12 +66,14 @@ const Exercise = ({fields}) =>
         setExerciseState(newExerciseState);
     }, []);
 
-    const onChange = (fieldKey, newFieldValue) =>
+    const onFieldChange = (fieldKey, newFieldValue) =>
     {
         setExerciseState({
             ...exerciseState,
             [fieldKey]: newFieldValue
         });
+
+        onChange(exerciseState);
     }
 
     return <View style={styles.exerciseDiv}>
@@ -79,8 +81,8 @@ const Exercise = ({fields}) =>
             style={styles.field}
             field={field}
             key={i}
-            onChange={onChange}
-            value={_.get(exerciseState, field.fieldKey, 'null')}/>)}
+            onChange={onFieldChange}
+            value={_.get(exerciseState, field.fieldKey, null)}/>)}
         </View>;
 };
 

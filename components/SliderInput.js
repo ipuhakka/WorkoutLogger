@@ -28,7 +28,7 @@ const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange, st
                     onChange(asInt);
                 }
             }}
-            value={(textState).toString()}
+            value={(textState || '').toString()}
             style={{ margin: 10, width: '25%', height: 50}} />
         <Slider
             value={value}
@@ -50,7 +50,8 @@ SliderInput.propTypes = {
     sliderMinValue: PropTypes.number.isRequired,
     sliderMaxValue: PropTypes.number.isRequired,
 
-    value: PropTypes.number.isRequired,
+    /** TODO: Pitäisi olla required? */
+    value: PropTypes.number,
 
     onChange: PropTypes.func.isRequired,
 

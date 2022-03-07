@@ -3,6 +3,7 @@ import { StyleSheet, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FaIcon from 'react-native-vector-icons/FontAwesome';
+import NewWorkout from './views/NewWorkout';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +19,7 @@ export default function App()
       <Tab.Navigator >
         <Tab.Screen 
             name="NewWorkout"
-            component={PlaceHolder}
+            component={NewWorkout}
             options={{
               title: 'Uusi treeni',
               tabBarIcon: ({ color }) =>
