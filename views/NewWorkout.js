@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import { Text, View, ScrollView } from 'react-native';
 import { Button, Divider } from 'react-native-paper';
-import Exercise from '../components/Exercise';
+import weightExercise from '../components/WeightExercise';
+import { useDispatch } from 'react-redux';
+import { createExercise } from '../middlewares/exerciseMiddleware';
+import WeightExercise from '../components/WeightExercise';
+
+const exerciseTypes = Object.freeze({
+    weightExercise: 'weightExercise',
+    staminaExercise: 'staminaExercise'
+});
 
 const NewWorkout = () =>
 {
+    const dispatch = useDispatch();
     const [exercises, setExercises] = useState([]);
     const [workoutState, setWorkoutState] = useState([]);
 
@@ -29,9 +38,10 @@ const NewWorkout = () =>
                         { key: 'Kyykky', title: 'Kyykkä' }
                     ],
                     allowAddNew: true,
-                    onAddNew: (newItem) => 
+                    onAddNew: async (newItem) => 
                     {
-                        console.log('TODO: Onadd handling', newItem);
+                        // TODO: Händlää
+                        const result = await dispatch(createExercise(newItem, 'weightExercise'));
                     }
                 },
                 {
@@ -69,13 +79,14 @@ const NewWorkout = () =>
             onPress={addWeightExercise}>Lisää uusi voimaharjoite</Button>
             <View>
                 {exercises.map((exercise, i) => <View key={`exercise-view-${i}`}>
-                    <Exercise 
-                    key={i}
-                    fields={exercise.fields}
-                    onChange={(newState) => 
-                    {
-                        onChangeWorkout(newState, i);
-                    }}/>
+                    <WeightExercise 
+                        onChange={(newState) => onChangeWorkout(newState, i)}
+                        exerciseOptions={
+                            [
+                                { key: 'mave', title: 'Maastaveto'},
+                                { key: 'Kyykky', title: 'Kyykkä' }
+                            ]
+                        }/>
                     <Divider key={`workout-divider-${i}`}/>
                     </View>)}
             </View>
