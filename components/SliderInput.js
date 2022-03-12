@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {View, StyleSheet} from 'react-native';
-import { TextInput, Title } from 'react-native-paper';
+import { TextInput, Subheading } from 'react-native-paper';
 import {Slider} from '@miblanchard/react-native-slider';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+
+const styles = StyleSheet.create({
+    textInput: { 
+        marginLeft: 0,
+        marginRight: 0,
+        width: '25%',
+        height: 50
+    },
+});
 
 const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange, style}) =>
 {
@@ -15,8 +24,8 @@ const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange, st
     }, [value]);
 
     return <View style={style}>
-        <Title>{title}</Title>
         <TextInput
+            label={title}
             onChangeText={(newValue) => 
             {
                 setTextState(newValue);
@@ -29,7 +38,7 @@ const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange, st
                 }
             }}
             value={(textState || '').toString()}
-            style={{ margin: 10, width: '25%', height: 50}} />
+            style={styles.textInput} />
         <Slider
             value={value}
             onSlidingComplete={newValue => 

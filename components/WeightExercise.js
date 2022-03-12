@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Dropdown from './Dropdown';
 import SliderInput from './SliderInput';
-import { TextInput, Title } from 'react-native-paper';
+import { TextInput, Switch, Subheading } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
@@ -12,13 +12,25 @@ const styles = StyleSheet.create({
         marginTop: 50
     },
     field: {
-        margin: 10
+        marginLeft: 10,
+        marginRight: 10,
+        marginTop: 2
+    },
+    sliderField: {
+        marginLeft: 10,
+        marginRight: 40,
+        marginTop: 2
+    },
+    switchView: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     }
 });
 
-const WeightExercise = ({ exerciseOptions, onAddNewExercise }) =>
+/** Component for weight exercise with equal sets */
+const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
 {
-    /** Exercise state. Exercise name, Array of sets, each set contains weight and number of reps */
+    /** Exercise state. Exercise name, sets, reps, weight */
     const [exerciseState, setExerciseState] = useState({
         exercise: null,
         sets: 3,
@@ -27,58 +39,94 @@ const WeightExercise = ({ exerciseOptions, onAddNewExercise }) =>
         type: 'normal'
     });
 
-    return <View style={styles.exerciseDiv}>
+    const changeExerciseState = (newState) =>
+    {
+        setExerciseState(newState),
+        onChange(newState);
+    }
+
+    return <>
         <Dropdown
-            title='Harjoitus'
-            options={exerciseOptions}
-            allowAddNew={true}
-            onAddNew={(item) => onAddNewExercise(item)}
-            style={styles.field}
-            onChange={(newExerciseKey) =>
-            {
-                const newExerciseState = {...exerciseState};
-                newExerciseState.exercise = newExerciseKey;
-                setExerciseState(newExerciseState);
-            }}
-            />
+        title='Harjoitus'
+        options={exerciseOptions}
+        allowAddNew={true}
+        onAddNew={(item) => onAddNewExercise(item)}
+        style={styles.field}
+        value={exerciseState.exercise}
+        onChange={(newExerciseKey) =>
+        {
+            const newExerciseState = {...exerciseState};
+            newExerciseState.exercise = newExerciseKey;
+            changeExerciseState(newExerciseState);
+        }}
+        />
         <SliderInput
             title='Sarjat'
             sliderMinValue={1}
             sliderMaxValue={5}
             value={exerciseState.sets}
-            style={styles.field}
+            style={styles.sliderField}
             onChange={(newValue) =>
             {
                 const newExerciseState = {...exerciseState};
                 
                 newExerciseState.sets = newValue;
-                setExerciseState(newExerciseState);
+                changeExerciseState(newExerciseState);
             }} />
         <SliderInput
             title='Toistot'
             sliderMinValue={1}
             sliderMaxValue={12}
-            style={styles.field}
+            style={styles.sliderField}
             value={exerciseState.reps}
             onChange={(newValue) =>
             {
                 const newExerciseState = {...exerciseState};
                 newExerciseState.reps = newValue;
-                setExerciseState(newExerciseState);
+                changeExerciseState(newExerciseState);
             }} />
         <View style={styles.field}>
-            <Title>Paino</Title>
             <TextInput 
+                label='Paino'
                 value={exerciseState.weight}
                 onChangeText={(newWeight) =>
                 {
                     /** TODO: Numeerisena */
                     const newExerciseState = {...exerciseState};
                     newExerciseState.weight = newWeight;
-                    setExerciseState(newExerciseState);
+                    changeExerciseState(newExerciseState);
                 }}
             />
         </View>
+    </>;
+}
+
+const ProgressiveExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
+{
+    return <Subheading>Progressive</Subheading>;
+}
+
+const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
+{
+    const [individualSetModeOn, setIndividualSetModeOn] = useState(false);
+
+    return <View style={styles.exerciseDiv}>
+        {<View style={styles.switchView}>
+            <Subheading>Syötä sarjat yksittäin</Subheading>
+            <Switch 
+                value={individualSetModeOn}
+                onValueChange={() => setIndividualSetModeOn(!individualSetModeOn)}
+                color='blue'/>
+        </View>}
+        {individualSetModeOn
+            ? <ProgressiveExercise />
+            : <NormalExercise
+            exerciseOptions={exerciseOptions}
+            onAddNewExercise={onAddNewExercise}
+            onChange={(newState) =>
+            {
+                onChange(newState);
+            }} />}
     </View>
 }
 

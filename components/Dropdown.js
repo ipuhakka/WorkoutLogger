@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Modal } from 'react-native';
-import { Title, Button, TextInput } from 'react-native-paper';
+import { Subheading, Button, TextInput } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import PropTypes from 'prop-types';
 
@@ -45,7 +45,7 @@ const DropdownWrapper = ({ title, options, allowAddNew, onAddNew, onChange, valu
               }}>Lisää</Button>
           </View>
         </Modal>
-      <Title>{title}</Title>
+      <Subheading>{title}</Subheading>
       <Dropdown
         style={[styles.dropdown]}
         search={options.length > 10}
