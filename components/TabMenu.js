@@ -11,14 +11,12 @@ const styles = StyleSheet.create({
     }
 });
 
-const TabMenu = ({panes}) =>
+const TabMenu = ({panes, activeTab, onTabChange}) =>
 {
-    const [activeTab, setActiveTab] = useState(0);
-
     const menuButtons = panes.map((pane, i) => 
         <Button 
             key={`tab-menu-item-${i}`}
-            onPress={() => setActiveTab(i)}
+            onPress={() => onTabChange(i)}
             color={i === activeTab ? 'black' : 'blue'}>{pane.title}</Button>);
 
     return <View>
@@ -37,7 +35,9 @@ TabMenu.propTypes = {
     panes: PropTypes.arrayOf(PropTypes.shape({
         title: PropTypes.string.isRequired,
         content: PropTypes.any
-    }))
+    })),
+    activeTab: PropTypes.number.isRequired,
+    onTabChange: PropTypes.func.isRequired
 };
 
 export default TabMenu;

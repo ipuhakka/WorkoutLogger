@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Dropdown from './Dropdown';
 import SliderInput from './SliderInput';
-import { TextInput, Switch, Subheading } from 'react-native-paper';
+import TabMenu from './TabMenu';
+import { TextInput, Switch, Subheading, Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
@@ -103,7 +104,81 @@ const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
 
 const ProgressiveExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
 {
-    return <Subheading>Progressive</Subheading>;
+    const [sets, setSets] = useState([]);
+    const [activeTab, setActiveTab] = useState(0);
+
+    const changeSet = (index, key, value) =>
+    {
+        const newSets = [...sets];
+        newSets[index][key] = value;
+        setSets(newSets);
+        onChange({
+            ...newSets,
+            type: 'progressive',
+            sets: sets.length
+        });
+    };
+
+    const panes = sets.map((tab, i) => {
+        return {
+            title: `Sarja ${i+1}`,
+            content: <>
+                <Dropdown
+                title='Harjoitus'
+                options={exerciseOptions}
+                allowAddNew={true}
+                onAddNew={(item) => onAddNewExercise(item)}
+                style={styles.field}
+                value={sets[i].exercise}
+                onChange={(newExerciseKey) =>
+                {
+                    console.log('change ex', newExerciseKey);
+                    changeSet(i, 'exercise', newExerciseKey);
+                }}
+                />
+                <SliderInput
+                    title='Toistot'
+                    sliderMinValue={1}
+                    sliderMaxValue={12}
+                    style={styles.sliderField}
+                    value={sets[i].reps}
+                    onChange={(newValue) =>
+                    {
+                        changeSet(i, 'reps', newValue);
+                    }} />
+                <View style={styles.field}>
+                    <TextInput 
+                        label='Paino'
+                        value={sets[i].weight}
+                        onChangeText={(newWeight) =>
+                        {
+                            /** TODO: Numeerisena */
+                            changeSet(i, 'weight', newWeight);
+                        }}
+                    />
+                </View>
+            </>
+        }
+    });
+
+    return <View>
+        <Button
+            color='blue'
+            onPress={() =>
+            {
+                const newSets = [...sets];
+                newSets.push({
+                    reps: 10,
+                    weight: null
+                });
+                setSets(newSets);
+                setActiveTab(sets.length);
+            }}>Lisää uusi sarja</Button>
+        <TabMenu panes={panes} activeTab={activeTab} onTabChange={(newActiveTab) =>
+        {
+            setActiveTab(newActiveTab);
+        }}/>
+        </View>;
 }
 
 const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
@@ -119,14 +194,20 @@ const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
                 color='blue'/>
         </View>}
         {individualSetModeOn
-            ? <ProgressiveExercise />
+            ? <ProgressiveExercise 
+                exerciseOptions={exerciseOptions}
+                onAddNewExercise={onAddNewExercise}
+                onChange={(newState) =>
+                {
+                    onChange(newState);
+                }} />
             : <NormalExercise
-            exerciseOptions={exerciseOptions}
-            onAddNewExercise={onAddNewExercise}
-            onChange={(newState) =>
-            {
-                onChange(newState);
-            }} />}
+                exerciseOptions={exerciseOptions}
+                onAddNewExercise={onAddNewExercise}
+                onChange={(newState) =>
+                {
+                    onChange(newState);
+                }} />}
     </View>
 }
 
