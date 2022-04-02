@@ -42,6 +42,7 @@ const DropdownWrapper = ({ title, options, allowAddNew, onAddNew, onChange, valu
               {
                 onAddNew(newItem);
                 setNewItem(null);
+                setModalVisible(false);
               }}>Lisää</Button>
           </View>
         </Modal>
