@@ -5,6 +5,7 @@ import SliderInput from './SliderInput';
 import TabMenu from './TabMenu';
 import { TextInput, Switch, Subheading, Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
+import { WeightExerciseType } from '../constansts';
 
 const styles = StyleSheet.create({
     exerciseDiv: {
@@ -37,7 +38,7 @@ const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
         sets: 3,
         reps: 10,
         weight: null,
-        type: 'normal'
+        type: WeightExerciseType.normal
     });
 
     const changeExerciseState = (newState) =>
@@ -102,9 +103,11 @@ const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
     </>;
 }
 
-const ProgressiveExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
+/** Component for exercise with differing sets */
+const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
 {
     const [sets, setSets] = useState([]);
+    const [exercise, setExercise] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
 
     const changeSet = (index, key, value) =>
@@ -113,29 +116,29 @@ const ProgressiveExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
         newSets[index][key] = value;
         setSets(newSets);
         onChange({
-            ...newSets,
-            type: 'progressive',
-            sets: sets.length
+            sets: newSets,
+            type: WeightExerciseType.custom,
+            setCount: sets.length,
+            exercise: exercise
         });
     };
+
+    const changeExercise = (newExercise) =>
+    {
+        setExercise(newExercise);
+
+        onChange({
+            sets: sets,
+            setCount: sets.length,
+            type: WeightExerciseType.custom,
+            exercise: newExercise
+        })
+    }
 
     const panes = sets.map((tab, i) => {
         return {
             title: `Sarja ${i+1}`,
             content: <>
-                <Dropdown
-                title='Harjoitus'
-                options={exerciseOptions}
-                allowAddNew={true}
-                onAddNew={(item) => onAddNewExercise(item)}
-                style={styles.field}
-                value={sets[i].exercise}
-                onChange={(newExerciseKey) =>
-                {
-                    console.log('change ex', newExerciseKey);
-                    changeSet(i, 'exercise', newExerciseKey);
-                }}
-                />
                 <SliderInput
                     title='Toistot'
                     sliderMinValue={1}
@@ -162,6 +165,18 @@ const ProgressiveExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
     });
 
     return <View>
+        <Dropdown
+                title='Harjoitus'
+                options={exerciseOptions}
+                allowAddNew={true}
+                onAddNew={(item) => onAddNewExercise(item)}
+                style={styles.field}
+                value={exercise}
+                onChange={(newExerciseKey) =>
+                {
+                    changeExercise(newExerciseKey);
+                }}
+                />
         <Button
             color='blue'
             onPress={() =>
@@ -194,7 +209,7 @@ const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
                 color='blue'/>
         </View>}
         {individualSetModeOn
-            ? <ProgressiveExercise 
+            ? <CustomExercise 
                 exerciseOptions={exerciseOptions}
                 onAddNewExercise={onAddNewExercise}
                 onChange={(newState) =>
