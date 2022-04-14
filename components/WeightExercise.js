@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Dropdown from './Dropdown';
 import SliderInput from './SliderInput';
@@ -30,38 +30,28 @@ const styles = StyleSheet.create({
 });
 
 /** Component for weight exercise with equal sets */
-const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
+const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseState }) =>
 {
-    /** Exercise state. Exercise name, sets, reps, weight */
-    const [exerciseState, setExerciseState] = useState({
-        exercise: null,
-        sets: 3,
-        reps: 10,
-        weight: null,
-        type: WeightExerciseType.normal
-    });
-
     const changeExerciseState = (newState) =>
     {
-        setExerciseState(newState),
         onChange(newState);
     }
 
     return <>
         <Dropdown
-        title='Harjoitus'
-        options={exerciseOptions}
-        allowAddNew={true}
-        onAddNew={(item) => onAddNewExercise(item)}
-        style={styles.field}
-        value={exerciseState.exercise}
-        onChange={(newExerciseKey) =>
-        {
-            const newExerciseState = {...exerciseState};
-            newExerciseState.exercise = newExerciseKey;
-            changeExerciseState(newExerciseState);
-        }}
-        />
+            title='Harjoitus'
+            options={exerciseOptions}
+            allowAddNew={true}
+            onAddNew={(item) => onAddNewExercise(item)}
+            style={styles.field}
+            value={exerciseState.exercise}
+            onChange={(newExerciseKey) =>
+            {
+                const newExerciseState = {...exerciseState};
+                newExerciseState.exercise = newExerciseKey;
+                changeExerciseState(newExerciseState);
+            }}
+            />
         <SliderInput
             title='Sarjat'
             sliderMinValue={1}
@@ -104,11 +94,18 @@ const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
 }
 
 /** Component for exercise with differing sets */
-const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
+const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseState }) =>
 {
     const [sets, setSets] = useState([]);
     const [exercise, setExercise] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
+
+    useEffect(() =>
+    {
+        setExercise(exerciseState.exercise);
+        setSets(exerciseState.sets);
+        setActiveTab(exerciseState.sets.length - 1);
+    }, []);
 
     const changeSet = (index, key, value) =>
     {
@@ -196,33 +193,53 @@ const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
         </View>;
 }
 
-const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange }) =>
+const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseState }) =>
 {
-    const [individualSetModeOn, setIndividualSetModeOn] = useState(false);
+    const [customModeOn, setCustomModeOn] = useState(false);
+
+    useEffect(() =>
+    {
+        setCustomModeOn(exerciseState.type === WeightExerciseType.custom);
+    }, []);
+
+    const toggleCustomMode = () =>
+    {
+        // Check if custom mode is not on because state is altered after on change call
+        onChange({
+            ...exerciseState,
+            type: !customModeOn
+                ? WeightExerciseType.custom
+                : WeightExerciseType.normal
+        })
+
+        setCustomModeOn(!customModeOn);
+    }
 
     return <View style={styles.exerciseDiv}>
         {<View style={styles.switchView}>
             <Subheading>Syötä sarjat yksittäin</Subheading>
             <Switch 
-                value={individualSetModeOn}
-                onValueChange={() => setIndividualSetModeOn(!individualSetModeOn)}
+                value={customModeOn}
+                onValueChange={() => toggleCustomMode()}
                 color='blue'/>
         </View>}
-        {individualSetModeOn
+        {exerciseState.type === WeightExerciseType.custom
             ? <CustomExercise 
                 exerciseOptions={exerciseOptions}
                 onAddNewExercise={onAddNewExercise}
                 onChange={(newState) =>
                 {
                     onChange(newState);
-                }} />
+                }} 
+                exerciseState={exerciseState} />
             : <NormalExercise
                 exerciseOptions={exerciseOptions}
                 onAddNewExercise={onAddNewExercise}
                 onChange={(newState) =>
                 {
                     onChange(newState);
-                }} />}
+                }}
+                exerciseState={exerciseState} />}
     </View>
 }
 
@@ -232,7 +249,8 @@ WeightExercise.propTypes = {
         key: PropTypes.any.isRequired,
         title: PropTypes.string.isRequired
     })),
-    onAddNewExercise: PropTypes.func.isRequired
+    onAddNewExercise: PropTypes.func.isRequired,
+    exerciseState: PropTypes.object.isRequired
 }
 
 export default WeightExercise;

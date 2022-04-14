@@ -5,12 +5,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createExercise, getExercises } from '../middlewares/exerciseMiddleware';
 import Accordion from '../components/Accordion';
 import WeightExercise from '../components/WeightExercise';
-import { ExerciseTypes } from '../constansts';
 import _ from 'lodash';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StorageKeys, ExerciseTypes, WeightExerciseType } from '../constansts';
 
 const styles = StyleSheet.create({
     accordionContainer: {
         marginTop: 4
+    },
+    stateControlContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        marginBottom: 20
+    },
+    button: {
+        flex: 1
     }
 });
 
@@ -19,30 +28,67 @@ const NewWorkout = () =>
     const dispatch = useDispatch();
     const savedExercises = useSelector((state) => state.exercise.exercises);
 
-    useEffect(() => {
-        dispatch(getExercises());
-    }, []);
-
     const [workoutState, setWorkoutState] = useState([]);
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState(null);
 
+    useEffect(() => 
+    {
+        const getSavedWorkoutState = async () =>
+        {
+            const currentWorkoutJson = await AsyncStorage.getItem(StorageKeys.currentWorkout);
+
+            if (currentWorkoutJson)
+            {
+                setWorkoutState(JSON.parse(currentWorkoutJson));
+            }
+        }
+
+        getSavedWorkoutState();
+        dispatch(getExercises());
+    }, []);
+
     const onChangeWorkout = (exercise, index) =>
     {
         const newState = [...workoutState];
+        const oldExerciseState = newState[index];
+
+        if (oldExerciseState.type !== exercise.type)
+        {
+            if (exercise.type === WeightExerciseType.custom)
+            {
+                delete exercise.reps;
+                delete exercise.weight;
+                exercise.sets = [];
+            }
+            else
+            {
+                exercise.sets = 3;
+                exercise.reps = 10;
+                exercise.weight = null;
+            }
+        }
+
         newState[index] = exercise;
         setWorkoutState(newState);
+
+        AsyncStorage.setItem(StorageKeys.currentWorkout, JSON.stringify(newState));
     };
 
     const addWeightExercise = () =>
     {
         const newExercises = [...workoutState];
-        newExercises.push({});
+        newExercises.push({
+            exercise: null,
+            sets: 3,
+            reps: 10,
+            weight: null,
+            type: WeightExerciseType.normal
+        });
 
         setWorkoutState(newExercises);
     }
 
-    console.log('exercises', workoutState);
     return (<ScrollView contentContainerStyle={{flexGrow: 1}}>
         <Snackbar
             visible={snackBarVisible}
@@ -50,15 +96,23 @@ const NewWorkout = () =>
             duration={1000}>
                 {snackBarMessage}
         </Snackbar>
+        <View style={styles.stateControlContainer}>
+            <Button
+                style={styles.button}
+                color='black'
+                mode='outlined'
+                onPress={() => console.log('TODO: Päätä treeni')}>Päätä treeni</Button>
+        </View>
         <Button 
             mode='outlined'
             color='blue'
-            onPress={addWeightExercise}>Lisää uusi voimaharjoite</Button>
+            onPress={addWeightExercise}>Uusi voimaharjoite</Button>
             <View>
                 {workoutState.map((exercise, i) => <View style={styles.accordionContainer} key={`exercise-view-${i}`}>
                     <Accordion title={_.get(exercise, 'exercise', '')}>
-                        <WeightExercise 
+                        <WeightExercise
                             onChange={(newState) => onChangeWorkout(newState, i)}
+                            exerciseState={exercise}
                             onAddNewExercise={(newExercise) =>
                                 {
                                     dispatch(createExercise(newExercise, 'weight'));
