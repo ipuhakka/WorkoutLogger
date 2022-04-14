@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 50,
+    flex: 1,
     borderColor: 'gray',
     borderWidth: 0.5,
     borderRadius: 8,
@@ -19,6 +20,11 @@ const styles = StyleSheet.create({
   modalButtonContainer: {
     flexDirection: 'row',
     flex: 1
+  },
+  fieldContainer: {
+    flexDirection: 'row',
+    marginTop: 5,
+    marginBottom: 5
   }
 });
 
@@ -47,22 +53,24 @@ const DropdownWrapper = ({ title, options, allowAddNew, onAddNew, onChange, valu
           </View>
         </Modal>
       <Subheading>{title}</Subheading>
-      <Dropdown
-        style={[styles.dropdown]}
-        search={options.length > 10}
-        data={options}
-        title={title}
-        labelField="title"
-        valueField="key"
-        placeholder={title}
-        value={value}
-        onChange={item => 
-        {
-          onChange(item.key);
-        }} />
-      {allowAddNew && <Button
-        color='blue'
-        onPress={() => setModalVisible(true)}>Lisää uusi</Button>}
+      <View style={styles.fieldContainer}>
+        <Dropdown
+          style={[styles.dropdown]}
+          search={options.length > 10}
+          data={options}
+          title={title}
+          labelField="title"
+          valueField="key"
+          placeholder={title}
+          value={value}
+          onChange={item => 
+          {
+            onChange(item.key);
+          }} />
+        {allowAddNew && <Button
+          color='blue'
+          onPress={() => setModalVisible(true)}>Lisää uusi</Button>}
+      </View>
     </View>
   );
 };

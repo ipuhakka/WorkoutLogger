@@ -7,12 +7,13 @@ import PropTypes from 'prop-types';
 const styles = StyleSheet.create({
     header: {
         backgroundColor: '#c6c6c6',
-        height: 40,
+        height: 60,
         flexDirection: 'row',
         alignItems: 'center',
     },
     titleContainer: {
-        flex: 5
+        flex: 5,
+        marginLeft: 5
     },
     arrowContainer: {
         marginRight: 3,
