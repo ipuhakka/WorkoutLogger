@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Dropdown from './Dropdown';
 import SliderInput from './SliderInput';
 import TabMenu from './TabMenu';
-import { TextInput, Switch, Subheading, Button } from 'react-native-paper';
+import { Switch, Subheading, Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import { WeightExerciseType } from '../constansts';
+import NumberInput from '../components/NumberInput';
 
 const styles = StyleSheet.create({
     exerciseDiv: {
@@ -78,16 +79,16 @@ const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
                 changeExerciseState(newExerciseState);
             }} />
         <View style={styles.field}>
-            <TextInput 
+            <NumberInput 
                 label='Paino'
-                value={exerciseState.weight}
-                onChangeText={(newWeight) =>
+                value={Number(exerciseState.weight)}
+                onChange={(newWeight) =>
                 {
-                    /** TODO: Numeerisena */
                     const newExerciseState = {...exerciseState};
                     newExerciseState.weight = newWeight;
                     changeExerciseState(newExerciseState);
                 }}
+                keyboardType='numeric'
             />
         </View>
     </>;
@@ -147,12 +148,11 @@ const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
                         changeSet(i, 'reps', newValue);
                     }} />
                 <View style={styles.field}>
-                    <TextInput 
+                    <NumberInput 
                         label='Paino'
-                        value={sets[i].weight}
-                        onChangeText={(newWeight) =>
+                        value={Number(sets[i].weight)}
+                        onChange={(newWeight) =>
                         {
-                            /** TODO: Numeerisena */
                             changeSet(i, 'weight', newWeight);
                         }}
                     />

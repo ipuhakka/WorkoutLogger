@@ -38,7 +38,8 @@ const SliderInput = ({title, sliderMinValue, sliderMaxValue, value, onChange, st
                 }
             }}
             value={(textState || '').toString()}
-            style={styles.textInput} />
+            style={styles.textInput} 
+            keyboardType='numeric' />
         <Slider
             value={value}
             onSlidingComplete={newValue => 
