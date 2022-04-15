@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Button, Snackbar } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { createExercise, getExercises } from '../middlewares/exerciseMiddleware';
@@ -22,6 +22,29 @@ const styles = StyleSheet.create({
         flex: 1
     }
 });
+
+/**
+ * Ends workout. Clears current workout and adds it to workouts array
+ * @param {*} workoutState 
+ */
+const endWorkout = async(workoutState) =>
+{
+    const workoutsJson = await AsyncStorage.getItem(StorageKeys.workouts);
+
+    let workouts = [];
+    if (workoutsJson)
+    {
+        workouts = JSON.parse(workoutsJson);
+    }
+
+    workouts.push({
+        ...workoutState,
+        date: new Date().toLocaleDateString()
+    });
+
+    await AsyncStorage.setItem(StorageKeys.workouts, JSON.stringify(workouts));
+    await AsyncStorage.removeItem(StorageKeys.currentWorkout);
+}
 
 const NewWorkout = () =>
 {
@@ -89,6 +112,27 @@ const NewWorkout = () =>
         setWorkoutState(newExercises);
     }
 
+    const confirmEndWorkout = () =>
+    {
+        Alert.alert(
+            'Päätä treeni',
+            'Päätetäänkö treeni?',
+            [
+                { text: 'Peruuta' },
+                { 
+                    text: 'Ok',
+                    onPress: () =>
+                    {
+                        endWorkout(workoutState);
+                        setWorkoutState([]);
+
+                        setSnackBarMessage('Treeni päätetty')
+                        setSnackBarVisible(true);
+                    }}
+            ]
+        )
+    }
+
     return (<ScrollView contentContainerStyle={{flexGrow: 1}}>
         <Snackbar
             visible={snackBarVisible}
@@ -101,7 +145,7 @@ const NewWorkout = () =>
                 style={styles.button}
                 color='black'
                 mode='outlined'
-                onPress={() => console.log('TODO: Päätä treeni')}>Päätä treeni</Button>
+                onPress={confirmEndWorkout}>Päätä treeni</Button>
         </View>
         <Button 
             mode='outlined'

@@ -5,7 +5,7 @@ import SliderInput from './SliderInput';
 import TabMenu from './TabMenu';
 import { Switch, Subheading, Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
-import { WeightExerciseType } from '../constansts';
+import { WeightExerciseType, ExerciseTypes } from '../constansts';
 import NumberInput from '../components/NumberInput';
 
 const styles = StyleSheet.create({
@@ -229,7 +229,10 @@ const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
                 onAddNewExercise={onAddNewExercise}
                 onChange={(newState) =>
                 {
-                    onChange(newState);
+                    onChange({
+                        ...newState,
+                        exerciseType: ExerciseTypes.weightExercise
+                    });
                 }} 
                 exerciseState={exerciseState} />
             : <NormalExercise
@@ -237,7 +240,10 @@ const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
                 onAddNewExercise={onAddNewExercise}
                 onChange={(newState) =>
                 {
-                    onChange(newState);
+                    onChange({
+                        ...newState,
+                        exerciseType: ExerciseTypes.weightExercise
+                    });
                 }}
                 exerciseState={exerciseState} />}
     </View>
