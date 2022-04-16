@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FaIcon from 'react-native-vector-icons/FontAwesome';
 import NewWorkout from './views/NewWorkout';
+import History from './views/History';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,7 +29,7 @@ export default function App()
               } }} />
         <Tab.Screen 
           name='History'
-          component={PlaceHolder}
+          component={History}
           options={{
             title: 'Historia',
             tabBarIcon: ({ color }) =>
