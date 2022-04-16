@@ -38,7 +38,7 @@ const endWorkout = async(workoutState) =>
     }
 
     workouts.push({
-        ...workoutState,
+        exercises: workoutState,
         date: new Date().toLocaleDateString()
     });
 

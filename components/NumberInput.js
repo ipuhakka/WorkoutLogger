@@ -21,7 +21,7 @@ const NumberInput = ({label, value, onChange}) =>
         {
             setStringValue(String(value));
         }
-    }, []);
+    }, [value]);
 
     return <TextInput
         style={styles.input}
