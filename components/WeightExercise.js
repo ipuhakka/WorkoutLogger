@@ -88,7 +88,6 @@ const NormalExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
                     newExerciseState.weight = newWeight;
                     changeExerciseState(newExerciseState);
                 }}
-                keyboardType='numeric'
             />
         </View>
     </>;

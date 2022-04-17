@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createExercise, getExercises } from '../middlewares/exerciseMiddleware';
 import Accordion from '../components/Accordion';
 import WeightExercise from '../components/WeightExercise';
+import CardioExercise from '../components/CardioExercise';
 import _ from 'lodash';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKeys, ExerciseTypes, WeightExerciseType } from '../constansts';
@@ -14,8 +15,6 @@ const styles = StyleSheet.create({
         marginTop: 4
     },
     stateControlContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
         marginBottom: 20
     },
     button: {
@@ -106,7 +105,21 @@ const NewWorkout = () =>
             sets: 3,
             reps: 10,
             weight: null,
-            type: WeightExerciseType.normal
+            type: WeightExerciseType.normal,
+            exerciseType: ExerciseTypes.weightExercise
+        });
+
+        setWorkoutState(newExercises);
+    }
+
+    const addCardioExercise = () =>
+    {
+        const newExercises = [...workoutState];
+        newExercises.push({
+            time: null,
+            sets: 1,
+            distance: null,
+            exerciseType: ExerciseTypes.cardioExercise
         });
 
         setWorkoutState(newExercises);
@@ -147,19 +160,23 @@ const NewWorkout = () =>
                 mode='outlined'
                 onPress={confirmEndWorkout}>Päätä treeni</Button>
         </View>
-        <Button 
-            mode='outlined'
+        <Button
             color='blue'
             onPress={addWeightExercise}>Uusi voimaharjoite</Button>
-            <View>
-                {workoutState.map((exercise, i) => <View style={styles.accordionContainer} key={`exercise-view-${i}`}>
-                    <Accordion title={_.get(exercise, 'exercise', '')}>
-                        <WeightExercise
+        <Button
+            color='blue'
+            onPress={addCardioExercise}>Uusi kestävyysharjoite</Button>
+        <View>
+            {workoutState
+                .map((exercise, i) => <View style={styles.accordionContainer} key={`exercise-view-${i}`}>
+                <Accordion title={_.get(exercise, 'exercise', '')}>
+                    {exercise.exerciseType === ExerciseTypes.weightExercise
+                        ? <WeightExercise
                             onChange={(newState) => onChangeWorkout(newState, i)}
                             exerciseState={exercise}
                             onAddNewExercise={(newExercise) =>
                                 {
-                                    dispatch(createExercise(newExercise, 'weight'));
+                                    dispatch(createExercise(newExercise, ExerciseTypes.weightExercise));
                                     setSnackBarMessage(`Luotiin uusi harjoitus: ${newExercise}`);
                                     setSnackBarVisible(true);
                                 }}
@@ -170,9 +187,27 @@ const NewWorkout = () =>
                                     return { key: savedExercise.name, title: savedExercise.name }
                                 })
                             }/>
-                    </Accordion>
+                        : <CardioExercise
+                            sets={exercise.sets}
+                            distance={exercise.distance}
+                            time={exercise.time}
+                            exercise={exercise.exercise}
+                            exerciseOptions={savedExercises
+                                .filter(savedExercise => savedExercise.type === ExerciseTypes.cardioExercise)
+                                .map(savedExercise => 
+                                {
+                                    return { key: savedExercise.name, title: savedExercise.name }
+                                })}
+                            onAddNewExercise={(newExercise) =>
+                                {
+                                    dispatch(createExercise(newExercise, ExerciseTypes.cardioExercise));
+                                    setSnackBarMessage(`Luotiin uusi harjoitus: ${newExercise}`);
+                                    setSnackBarVisible(true);
+                                }}
+                            onChange={(newState) => onChangeWorkout(newState, i)}/>}
+                </Accordion>
             </View>)}
-            </View>
+        </View>
     </ScrollView>);
 };
 

@@ -6,7 +6,7 @@ export const StorageKeys = {
 
 export const ExerciseTypes = Object.freeze({
     weightExercise: 'weight',
-    staminaExercise: 'stamina'
+    cardioExercise: 'cardio'
 });
 
 export const WeightExerciseType = Object.freeze({
