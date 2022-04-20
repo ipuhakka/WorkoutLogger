@@ -40,7 +40,7 @@ const WorkoutHistory = ({ workout }) =>
 {
     return <Accordion title={workout.date}>
         {workout.exercises.map((exercise, i) =>
-            <Card>
+            <Card key={`exercise-card-${i}`}>
                 <Card.Title title={exercise.exercise} />
                 <Card.Content>
                     <ExerciseContent exercise={exercise} index={i}></ExerciseContent>  
