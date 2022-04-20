@@ -1,10 +1,11 @@
 import React, { useState, useEffect, } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import PropTypes from 'prop-types';
 import Dropdown from './Dropdown';
 import SliderInput from './SliderInput';
 import NumberInput from './NumberInput';
 import { ExerciseTypes } from '../constansts';
+import EvilIcon from 'react-native-vector-icons/EvilIcons';
 
 const styles = StyleSheet.create({
     exerciseDiv: {
@@ -21,6 +22,11 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 40,
         marginTop: 2
+    },
+    trashIconDiv: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: 10
     }
 });
 
@@ -31,9 +37,20 @@ const CardioExercise = ({
     exercise,
     onAddNewExercise,
     exerciseOptions,
-    onChange}) =>
+    onChange,
+    onDelete}) =>
 {
     return (<View style={styles.exerciseDiv}>
+        <View>
+            <Pressable 
+                onPress={onDelete}
+                style={styles.trashIconDiv}>
+                <EvilIcon
+                    name='trash'
+                    size={45}
+                    color='red' />
+            </Pressable>
+        </View>
         <Dropdown
                 title='Harjoitus'
                 options={exerciseOptions}
@@ -110,7 +127,8 @@ CardioExercise.propTypes = {
         key: PropTypes.any.isRequired,
         title: PropTypes.string.isRequired
     })),
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired
 }
 
 export default CardioExercise;

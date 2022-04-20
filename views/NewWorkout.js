@@ -125,6 +125,15 @@ const NewWorkout = () =>
         setWorkoutState(newExercises);
     }
 
+    const deleteExercise = (index) =>
+    {
+        const newExerciseState = [...workoutState];
+        newExerciseState.splice(index, 1);
+        setWorkoutState(newExerciseState);
+
+        AsyncStorage.setItem(StorageKeys.currentWorkout, JSON.stringify(newExerciseState));
+    }
+
     const confirmEndWorkout = () =>
     {
         Alert.alert(
@@ -173,6 +182,7 @@ const NewWorkout = () =>
                     {exercise.exerciseType === ExerciseTypes.weightExercise
                         ? <WeightExercise
                             onChange={(newState) => onChangeWorkout(newState, i)}
+                            onDelete={() => deleteExercise(i)}
                             exerciseState={exercise}
                             onAddNewExercise={(newExercise) =>
                                 {
@@ -204,7 +214,8 @@ const NewWorkout = () =>
                                     setSnackBarMessage(`Luotiin uusi harjoitus: ${newExercise}`);
                                     setSnackBarVisible(true);
                                 }}
-                            onChange={(newState) => onChangeWorkout(newState, i)}/>}
+                            onChange={(newState) => onChangeWorkout(newState, i)}
+                            onDelete={() => deleteExercise(i)}/>}
                 </Accordion>
             </View>)}
         </View>

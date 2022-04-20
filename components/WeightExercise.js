@@ -1,5 +1,5 @@
 import React, { useState, useEffect, } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import Dropdown from './Dropdown';
 import SliderInput from './SliderInput';
 import TabMenu from './TabMenu';
@@ -7,6 +7,7 @@ import { Switch, Subheading, Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import { WeightExerciseType, ExerciseTypes } from '../constansts';
 import NumberInput from '../components/NumberInput';
+import EvilIcon from 'react-native-vector-icons/EvilIcons';
 
 const styles = StyleSheet.create({
     exerciseDiv: {
@@ -27,6 +28,15 @@ const styles = StyleSheet.create({
     switchView: {
         flexDirection: 'row',
         justifyContent: 'flex-end'
+    },
+    trashIconDiv: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: 10
+    },
+    deleteSetButton: {
+        marginTop: 10,
+        marginBottom: 10
     }
 });
 
@@ -132,6 +142,13 @@ const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
         })
     }
 
+    const removeSet = (index) =>
+    {
+        const newSets = [...sets];
+        newSets.splice(index, 1);
+        setSets(newSets);
+    }
+
     const panes = sets.map((tab, i) => {
         return {
             title: `Sarja ${i+1}`,
@@ -156,6 +173,10 @@ const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
                         }}
                     />
                 </View>
+                <Button 
+                    style={styles.deleteSetButton}
+                    color='red'
+                    onPress={() => removeSet(i)}>Poista sarja</Button>
             </>
         }
     });
@@ -192,7 +213,7 @@ const CustomExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
         </View>;
 }
 
-const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseState }) =>
+const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseState, onDelete }) =>
 {
     const [customModeOn, setCustomModeOn] = useState(false);
 
@@ -222,6 +243,16 @@ const WeightExercise = ({ exerciseOptions, onAddNewExercise, onChange, exerciseS
                 onValueChange={() => toggleCustomMode()}
                 color='blue'/>
         </View>}
+        {
+            <View style={styles.trashIconDiv}>
+                <Pressable onPress={onDelete}>
+                    <EvilIcon
+                        name='trash'
+                        size={45}
+                        color='red'/>
+                </Pressable>
+            </View>
+        }
         {exerciseState.type === WeightExerciseType.custom
             ? <CustomExercise 
                 exerciseOptions={exerciseOptions}
@@ -255,7 +286,8 @@ WeightExercise.propTypes = {
         title: PropTypes.string.isRequired
     })),
     onAddNewExercise: PropTypes.func.isRequired,
-    exerciseState: PropTypes.object.isRequired
+    exerciseState: PropTypes.object.isRequired,
+    onDelete: PropTypes.func.isRequired
 }
 
 export default WeightExercise;
