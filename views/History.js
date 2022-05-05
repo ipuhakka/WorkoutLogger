@@ -33,7 +33,7 @@ const ExerciseContent = ({exercise, index}) =>
     {
         return exercise.type === WeightExerciseType.custom
             ? exercise.sets.map((set, j) => <Paragraph key={`history-workout-custom-set-${index}-${j}`}>{`${set.reps} x ${set.weight}kg`}</Paragraph>)
-            : <Paragraph key={`exercise-${index}-history`}>{`${exercise.sets} x ${exercise.reps} x ${exercise.weight}kg`}</Paragraph>;
+            : <Paragraph key={`exercise-${index}-history`}>{`${exercise.sets} x ${exercise.reps} x ${exercise.weight ? exercise.weight : 0}kg`}</Paragraph>;
     }
 }
 
