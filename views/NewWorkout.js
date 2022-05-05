@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Button, Snackbar } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { createExercise, getExercises } from '../middlewares/exerciseMiddleware';
+import { getWorkoutHistory } from '../middlewares/workoutMiddleware';
 import Accordion from '../components/Accordion';
 import WeightExercise from '../components/WeightExercise';
 import CardioExercise from '../components/CardioExercise';
@@ -143,13 +144,14 @@ const NewWorkout = () =>
                 { text: 'Peruuta' },
                 { 
                     text: 'Ok',
-                    onPress: () =>
+                    onPress: async () =>
                     {
-                        endWorkout(workoutState);
+                        await endWorkout(workoutState);
                         setWorkoutState([]);
 
-                        setSnackBarMessage('Treeni päätetty')
+                        setSnackBarMessage('Treeni päätetty');
                         setSnackBarVisible(true);
+                        dispatch(getWorkoutHistory());
                     }}
             ]
         )

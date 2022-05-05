@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Card, Paragraph } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 import Accordion from '../components/Accordion';
-import AsyncStorageUtils from '../utils/AsyncStorageUtils';
-import { StorageKeys, WeightExerciseType, ExerciseTypes } from '../constansts';
+import { useDispatch, useSelector } from 'react-redux';
+import { WeightExerciseType, ExerciseTypes } from '../constansts';
+import { getWorkoutHistory } from '../middlewares/workoutMiddleware';
 
 const ExerciseContent = ({exercise, index}) =>
 {
@@ -51,18 +52,13 @@ const WorkoutHistory = ({ workout }) =>
 
 const History = () =>
 {
-    const [workouts, setWorkouts] = useState([]);
+    const dispatch = useDispatch();
+
+    const workouts = useSelector((state) => state.workout.workoutHistory);
 
     useEffect(() =>
     {
-        const fetchWorkouts = async() =>
-        {
-            const storedWorkouts = await AsyncStorageUtils.getJsonAsync(StorageKeys.workouts) || [];
-
-            setWorkouts(storedWorkouts.reverse());
-        }
-
-        fetchWorkouts();
+        dispatch(getWorkoutHistory());
     }, []);
 
     return (
